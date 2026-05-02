@@ -1,59 +1,51 @@
-
-***
-
-```markdown
 # SaaS Task Manager
 
-A professional, full-stack Task Management platform designed for scale. This application mirrors the core functionality of Trello, featuring organization-based workflows, dynamic drag-and-drop boards, and a robust subscription model.
+A high-performance, full-stack Task Management platform built with the MERN stack (Next.js, React, Prisma, MongoDB/PostgreSQL).
+This application features organization-based workspaces, dynamic drag-and-drop task boards, and a professional subscription model.
 
 ## 🚀 Features
 
-*   **Organization Management**: Seamlessly create and switch between different organizations using Clerk’s multi-tenancy support.
-*   **Dynamic Board Creation**: Generate boards with high-quality background images sourced via the Unsplash API.
-*   **Drag-and-Drop Workflow**: Intuitive task management using `@hello-pangea/dnd` for reordering cards and lists.
-*   **Optimistic UI Updates**: Instant responsiveness for task movements, updating the UI immediately while the database syncs in the background.
-*   **Full Audit Logs**: Automatically tracks and displays every action (create, update, delete) within a board for team transparency.
-*   **Subscription & Limits**:
-    *   **Free Tier**: Includes board creation limits managed via a server-side counter.
-    *   **Pro Tier**: Unlock unlimited boards through Stripe checkout and a dedicated subscription management portal.
-*   **Responsive Modern UI**: Built with Shadcn UI and Tailwind CSS, ensuring a polished experience on desktop and mobile.
+*   **Organization-Centric Workflow**: Multi-tenancy support via Clerk for switching between team workspaces.
+*   **Dynamic Boards**: Create boards with background imagery integrated from the Unsplash API.
+*   **Interactive UX**: Drag-and-drop functionality for cards and lists with optimistic UI updates.
+*   **Activity Auditing**: Detailed logs for every action taken within a board (create, rename, delete).
+*   **Monetization**: Tiered access with Stripe-integrated subscriptions and board creation limits.
 
 ## 🛠️ Tech Stack
 
-*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-*   **Authentication**: [Clerk](https://clerk.com/)
-*   **Database**: [Prisma ORM](https://www.prisma.io/) (PostgreSQL/MongoDB)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn UI](https://ui.shadcn.com/)
-*   **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-*   **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod validation
-*   **Payments**: [Stripe](https://stripe.com/)
+*   **Frontend**: Next.js 14 (App Router), React, Tailwind CSS, Shadcn UI, Zustand, @hello-pangea/dnd.
+*   **Backend**: Next.js Server Actions, Prisma ORM, PostgreSQL/MongoDB, Stripe API, Clerk Auth.
 
-## 📂 Project Structure
-```text
-├── actions/             # Type-safe Server Actions for mutations
-├── app/                 # Next.js App Router (Layouts & Pages)
-│   ├── (marketing)/     # Landing page and public-facing routes
-│   ├── (platform)/      # Authenticated dashboard, Org, and Board routes
-│   └── api/             # Stripe and Clerk Webhook endpoints
-├── components/          # Reusable UI components (Modals, Forms, UI)
-├── hooks/               # Custom logic (useAction, useMobileSidebar)
-├── lib/                 # Shared utilities, Prisma client, and Stripe config
-├── prisma/              # Database schema and migration files
-└── types.ts             # Global TypeScript interface definitions
-```
+## 📂 Project Architecture
+
+### 🎨 Frontend Logic (Client Side)
+The frontend focuses on a highly responsive, interactive user experience using modern React patterns.
+
+*   **`app/(platform)`**: Contains the core dashboard logic, utilizing Next.js Layouts for persistent sidebars and navigation.
+*   **`components/`**: Modular UI library including specialized form components, modals for board/card creation, and Shadcn primitives.
+*   **`hooks/`**: 
+    *   `useAction`: A custom wrapper for server actions to manage client-side states (loading, errors, success).
+    *   `useMobileSidebar`: State management for responsive mobile navigation.
+*   **`public/`**: Managed static assets and icons.
+
+### ⚙️ Backend Logic (Server Side)
+The backend leverages Next.js Server Actions to handle business logic securely without traditional API overhead.
+
+*   **`actions/`**: The core "controller" layer. Contains type-safe functions for all mutations (Boards, Lists, Cards).
+*   **`prisma/`**: Defines the data model and relationships between Users, Organizations, and Task entities.
+*   **`lib/`**:
+    *   `db.ts`: Singleton Prisma client initialization.
+    *   `stripe.ts`: Configuration for handling payments and subscription checks.
+    *   `org-limit.ts`: Utility logic to enforce free-tier board constraints.
+*   **`api/`**: Dedicated webhook handlers for Stripe and Clerk events to keep the database in sync with external services.
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the repository
+### 1. Clone & Install
 ```bash
-git clone [https://github.com/tharun0135/saas-task-manager.git](https://github.com/tharun0135/saas-task-manager.git)
+git clone (repo)
 cd saas-task-manager
-```
-
-### 2. Install dependencies
-```bash
 npm install
-```
 
 ### 3. Environment Variables
 Create a `.env` file in the root directory and configure the following:
@@ -71,21 +63,19 @@ STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### 4. Database Initialization
+### 2. Database Initialization
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
-### 5. Run Development Server
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
+Analysis Summary
+Optimistic UI: The frontend uses immediate state updates for drag-and-drop, while the backend ensures data integrity.
 
-## 📝 Key Architecture Highlights
+Security: Authentication is enforced via Middleware, ensuring a strict boundary between public marketing pages and private user data.
 
-*   **Type-Safe Mutations**: Every database interaction is wrapped in a custom `useAction` hook, providing consistent error handling and loading states across the app.
-*   **Advanced Middleware**: Uses Clerk middleware to protect sensitive platform routes while allowing public access to the marketing landing page.
-*   **Scalable Schema**: The Prisma schema is optimized for relational data, linking Organizations to Boards, Lists, and Cards with automated Audit Log triggers.
-*   **Server Actions**: Fully utilizes Next.js 14 Server Actions to reduce client-side JavaScript and improve performance.
-```
+Audit Trails: Every backend mutation triggers an entry in the Audit Log table, providing a complete history of project changes.
